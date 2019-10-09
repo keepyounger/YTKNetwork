@@ -33,8 +33,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 FOUNDATION_EXPORT void YTKLog(NSString *format, ...) NS_FORMAT_FUNCTION(1,2);
 
-@class AFHTTPSessionManager;
-
 @interface YTKNetworkUtils : NSObject
 
 + (BOOL)validateJSON:(id)json withValidator:(id)jsonValidator;
@@ -89,16 +87,6 @@ FOUNDATION_EXPORT void YTKLog(NSString *format, ...) NS_FORMAT_FUNCTION(1,2);
 - (void)toggleAccessoriesWillStartCallBack;
 - (void)toggleAccessoriesWillStopCallBack;
 - (void)toggleAccessoriesDidStopCallBack;
-
-@end
-
-@interface YTKNetworkAgent (Private)
-
-- (AFHTTPSessionManager *)manager;
-- (void)resetURLSessionManager;
-- (void)resetURLSessionManagerWithConfiguration:(NSURLSessionConfiguration *)configuration;
-
-- (NSString *)incompleteDownloadTempCacheFolder;
 
 @end
 

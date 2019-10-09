@@ -31,7 +31,7 @@
 
 - (AFConstructingBlock)constructingBodyBlock {
     return ^(id<AFMultipartFormData> formData) {
-        NSData *data = UIImageJPEGRepresentation(_image, 0.9);
+        NSData *data = UIImageJPEGRepresentation(self->_image, 0.9);
         NSString *name = @"image";
         NSString *formKey = @"image";
         NSString *type = @"image/jpeg";

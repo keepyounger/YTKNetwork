@@ -38,7 +38,7 @@
 #define kYTKNetworkIncompleteDownloadFolderName @"Incomplete"
 
 @implementation YTKNetworkAgent {
-    AFHTTPSessionManager *_manager;
+    AFURLSessionManager *_manager;
     YTKNetworkConfig *_config;
     AFJSONResponseSerializer *_jsonResponseSerializer;
     AFXMLParserResponseSerializer *_xmlParserResponseSerialzier;
@@ -62,16 +62,17 @@
     self = [super init];
     if (self) {
         _config = [YTKNetworkConfig sharedConfig];
-        _manager = [[AFHTTPSessionManager alloc] initWithSessionConfiguration:_config.sessionConfiguration];
+        _manager = [[AFURLSessionManager alloc] initWithSessionConfiguration:_config.sessionConfiguration];
         _requestsRecord = [NSMutableDictionary dictionary];
         _processingQueue = dispatch_queue_create("com.yuantiku.networkagent.processing", DISPATCH_QUEUE_CONCURRENT);
         _allStatusCodes = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(100, 500)];
         pthread_mutex_init(&_lock, NULL);
 
         _manager.securityPolicy = _config.securityPolicy;
-        _manager.responseSerializer = [AFHTTPResponseSerializer serializer];
         // Take over the status code validation
-        _manager.responseSerializer.acceptableStatusCodes = _allStatusCodes;
+        AFHTTPResponseSerializer *httprs = [AFHTTPResponseSerializer serializer];
+        httprs.acceptableStatusCodes = _allStatusCodes;
+        _manager.responseSerializer = httprs;
         _manager.completionQueue = _processingQueue;
     }
     return self;
@@ -550,20 +551,6 @@
     NSString *md5URLString = [YTKNetworkUtils md5StringFromString:downloadPath];
     tempPath = [[self incompleteDownloadTempCacheFolder] stringByAppendingPathComponent:md5URLString];
     return [NSURL fileURLWithPath:tempPath];
-}
-
-#pragma mark - Testing
-
-- (AFHTTPSessionManager *)manager {
-    return _manager;
-}
-
-- (void)resetURLSessionManager {
-    _manager = [AFHTTPSessionManager manager];
-}
-
-- (void)resetURLSessionManagerWithConfiguration:(NSURLSessionConfiguration *)configuration {
-    _manager = [[AFHTTPSessionManager alloc] initWithSessionConfiguration:configuration];
 }
 
 @end
